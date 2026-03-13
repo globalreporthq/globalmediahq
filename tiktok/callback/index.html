@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Authorizing — Global Report Automation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0A1628;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .card {
+      background: #111e35;
+      border: 1px solid #1e3050;
+      border-radius: 12px;
+      padding: 48px 40px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo { font-size: 13px; letter-spacing: 3px; color: #B8952A; text-transform: uppercase; margin-bottom: 32px; }
+    .icon { font-size: 48px; margin-bottom: 20px; }
+    h1 { font-size: 1.5rem; margin-bottom: 12px; font-weight: 600; }
+    p { color: #8899aa; font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px; }
+    .code-block {
+      background: #0A1628;
+      border: 1px solid #1e3050;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #B8952A;
+      text-align: left;
+      word-break: break-all;
+      margin: 20px 0;
+      display: none;
+    }
+    .status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .status.success { background: #0d3320; color: #2ecc71; }
+    .status.error { background: #330d0d; color: #e74c3c; }
+    .status.loading { background: #1e2d3d; color: #aab; }
+    .back { margin-top: 32px; }
+    .back a { color: #B8952A; text-decoration: none; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Global Media Group</div>
+    <div class="icon" id="icon">⏳</div>
+    <h1 id="title">Processing Authorization...</h1>
+    <p id="message">Completing TikTok OAuth handshake for Global Report Automation.</p>
+    <span class="status loading" id="status">Connecting</span>
+    <div class="code-block" id="code-display"></div>
+    <div class="back"><a href="/">← Back to globalmediahq.com</a></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code  = params.get('code');
+    const error = params.get('error');
+    const state = params.get('state');
+
+    const icon    = document.getElementById('icon');
+    const title   = document.getElementById('title');
+    const message = document.getElementById('message');
+    const status  = document.getElementById('status');
+    const codeDisplay = document.getElementById('code-display');
+
+    if (error) {
+      icon.textContent = '✗';
+      title.textContent = 'Authorization Failed';
+      message.textContent = 'TikTok returned an error: ' + error;
+      status.textContent = 'Error';
+      status.className = 'status error';
+    } else if (code) {
+      icon.textContent = '✓';
+      title.textContent = 'Authorization Successful';
+      message.textContent = 'Global Report Automation has been granted access to your TikTok account. The publishing pipeline is now authorized.';
+      status.textContent = 'Authorized';
+      status.className = 'status success';
+      codeDisplay.style.display = 'block';
+      codeDisplay.textContent = 'Authorization code received\nState: ' + (state || 'N/A') + '\nScopes: user.info.basic, video.upload, video.publish\n\nToken exchange in progress via publishing server...';
+    } else {
+      icon.textContent = '?';
+      title.textContent = 'No Authorization Data';
+      message.textContent = 'This page handles TikTok OAuth callbacks for Global Report Automation.';
+      status.textContent = 'Idle';
+      status.className = 'status loading';
+    }
+  </script>
+</body>
+</html>
